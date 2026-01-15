@@ -27,6 +27,9 @@ Resources:
     Type: 'AWS::S3::Bucket'
   Instance:
     Type: 'AWS::EC2::Instance'
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT15M
     Properties:
       InstanceType: "t2.micro"
       ImageId: !Ref "LatestAmiId"
@@ -47,3 +50,4 @@ Resources:
           systemctl enable httpd
           systemctl start httpd
           echo "<html><head><title>Amazing test page</title></head><body><h1><center>${Message}</center></h1></body></html>" > /var/www/html/index.html
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource Instance --region ${AWS::Region}
